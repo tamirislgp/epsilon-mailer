@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Epsilon • Social Webview</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1560ff; --blue-700:#0d45c7; --blue-800:#0b39a8;
+    --text:#0b1220; --line:#e5e7eb; --bg:#f4f6fb; --warn:#ffd06b;
+    --qbg:#eef4ff; --qbd:#cfe0ff; --abg:#e8f9f0; --abd:#b8f0db;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, #e8edff 0%, transparent 60%), radial-gradient(900px 500px at 90% 0%, #fff1c2 0%, transparent 55%), var(--bg); color:var(--text); font-family:Inter,system-ui,Arial}
+  a{text-decoration:none}
+  .wrap{max-width:900px; margin:36px auto; padding:0 16px}
+  .email{background:#fff; border:1px solid var(--line); border-radius:24px; overflow:hidden; box-shadow:0 12px 40px rgba(2,6,23,.10)}
+  .email-head{background:linear-gradient(135deg, var(--blue) 0%, #1c6bff 45%, var(--blue-700) 100%); color:#fff; padding:18px 22px; display:flex; align-items:center; justify-content:space-between}
+  .brand img{height:28px; display:block}
+  .brand img.force-white{ filter: brightness(0) invert(1) saturate(0); }
+  @media (max-width:520px){ .brand img{height:24px} }
+  .badge{display:inline-block; padding:6px 10px; border-radius:999px; background:#eef2ff; color:#23314d; border:1px solid #e6eaff; font-size:12px}
+  .email-body{padding:26px 26px 22px}
+  .h1{font-size:28px; line-height:34px; margin:0 0 8px}
+  .lead{font-size:15px; color:#475569; margin:0 0 16px}
+  .divider{height:1px; background:linear-gradient(90deg, transparent, #e6e8ee, transparent); margin:14px 0}
+  .block-title{font-size:18px; margin:18px 0 10px}
+  .card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 6px 24px rgba(2,6,23,.06)}
+
+  .rail{display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin:14px 0}
+  .stat{display:grid; gap:6px; background:linear-gradient(180deg,#ffffff 0%, #fafbff 100%); border:1px solid #eef0f5; border-radius:16px; padding:14px 16px; box-shadow:0 6px 20px rgba(2,6,23,.05)}
+  .val{font-size:28px; font-weight:800; line-height:1}
+  .lbl{font-size:12px; color:#334155}
+  .meta{font-size:11px; color:#64748b}
+  .spark{height:6px; border-radius:999px; background:linear-gradient(90deg, var(--blue) var(--pct,70%), #e5e7eb var(--pct,70%))}
+
+  .obj-panel{border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:0 6px 18px rgba(2,6,23,.04); background:#fff}
+  .obj-row{display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:stretch; margin:10px 0}
+  .obj-q{background:var(--qbg); border:1px solid var(--qbd); color:#0b3ec9; border-radius:16px; padding:16px 18px; font-weight:800; font-size:20px; line-height:1.3}
+  .obj-a{background:var(--abg); border:1px solid var(--abd); color:#064e3b; border-radius:16px; padding:16px 18px; font-size:18px; line-height:1.45}
+  @media (max-width:900px){ .obj-row{grid-template-columns:1fr} .obj-q{font-size:18px} .obj-a{font-size:16px} }
+
+  .bullet{margin:0 0 0 18px}
+  .bullet li{margin:6px 0}
+  .cta-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+  .btn{display:block; text-align:center; padding:14px 16px; border-radius:14px; font-weight:600; border:1px solid transparent; box-shadow:0 8px 20px rgba(21,96,255,.18)}
+  .btn-primary{background:var(--blue); color:#fff}
+  .btn-warn{background:var(--warn); color:#0b1220; border:1px solid #f1c24d}
+  .foot{background:#0f3fb6; color:#fff; padding:16px 22px; font-size:12px; display:flex; justify-content:space-between; align-items:center}
+  .foot a{color:#fff; opacity:.9}
+
+  .backdrop{position:fixed; inset:0; background:rgba(2,6,23,.55); display:none; align-items:center; justify-content:center; padding:16px; z-index:50}
+  .backdrop:target{display:flex}
+  .modal{max-width:760px; width:100%; max-height:90vh; background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 24px 80px rgba(2,6,23,.55); display:flex; flex-direction:column}
+  .modal-head{position:sticky; top:0; z-index:2; background:linear-gradient(135deg, var(--blue-700), var(--blue-800)); color:#fff; padding:14px 18px; display:flex; align-items:center; justify-content:space-between}
+  .modal-body{padding:18px; background:#fff; overflow:auto; flex-grow:1}
+  .modal-foot{position:sticky; bottom:0; z-index:2; background:#fff; padding:14px 18px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end}
+  .btn-outline{background:#fff; color:#0b1220; border:1px solid #e5e7eb}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  label{display:block; font-weight:600; font-size:13px; margin:8px 0 6px}
+  input,select,textarea{width:100%; padding:12px; border:1px solid var(--line); border-radius:12px; font-size:14px}
+  textarea{min-height:120px; resize:vertical}
+  .hint{font-size:12px; color:#6b7280; margin-top:6px}
+
+  @media (max-width:1080px){ .rail{grid-template-columns:1fr 1fr 1fr} }
+  @media (max-width:720px){ .rail{grid-template-columns:1fr 1fr} .grid-2{grid-template-columns:1fr} }
+  @media (max-width:520px){ .rail{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="email">
+    <div class="email-head">
+      <div class="brand"><img class="force-white" src="./Epsilon-Logo.png" alt="Epsilon"></div>
+      <span class="badge">Social • Meta e TikTok</span>
+    </div>
+
+    <div class="email-body">
+      <h1 class="h1">Use Epsilon como sua camada de dados para Social</h1>
+      <p class="lead">Audiências comportamentais e sinais persistentes para reduzir dispersão, aumentar valor de visita e destravar performance real em Meta e TikTok.</p>
+
+      <div class="divider"></div>
+
+      <div class="rail">
+        <div class="stat" style="--pct:88%"><div class="val">−32,9%</div><div class="lbl">no valor do CPM vs CPM de interesses nativos</div><div class="spark"></div><div class="meta">Mais eficiência no alcance</div></div>
+        <div class="stat" style="--pct:92%"><div class="val">+37,7%</div><div class="lbl">engajamento no site</div><div class="spark"></div><div class="meta">Tráfego com intenção real</div></div>
+        <div class="stat" style="--pct:80%"><div class="val">3×</div><div class="lbl">mais sessões qualificadas no site</div><div class="spark"></div><div class="meta">Interações que geram valor</div></div>
+        <div class="stat" style="--pct:76%"><div class="val">+66%</div><div class="lbl">novos usuários no site da marca</div><div class="spark"></div><div class="meta">Aquisição incremental</div></div>
+        <div class="stat" style="--pct:72%"><div class="val">CPC</div><div class="lbl">eficiente por atenção qualificada</div><div class="spark"></div><div class="meta">Investimento que retorna em valor</div></div>
+      </div>
+
+      <div class="block-title">Por que a Epsilon muda o jogo</div>
+      <div class="card"><p>As plataformas otimizam o que conseguem enxergar dentro dos próprios ambientes. A Epsilon amplia esse campo de visão com sinais do mundo real (intenção, visitas físicas, apps instalados, NSE, propensão). Resultado: menos dispersão e mais atenção qualificada.</p></div>
+
+      <div class="block-title">Como aplicar</div>
+      <div class="card">
+        <ul class="bullet" style="margin:0 0 0 18px">
+          <li>Crie ad sets exclusivos com audiências Epsilon (não misture com interesses nativos).</li>
+          <li>Use UTMs únicas por ad set para leitura correta no site ou app.</li>
+          <li>Quando necessário, trabalhe com orçamentos iguais entre grupos de audiências para testes A/B.</li>
+          <li>KPIs por fase: Awareness (CPM/CPV/VTR), Consideração (CPC/CTR/Sessões) e Conversão (CPL/CPA/ROAS).</li>
+        </ul>
+      </div>
+
+      <div class="block-title">Objeções e respostas</div>
+      <div class="obj-panel">
+        <div class="obj-row">
+          <div class="obj-q">“Mas o CPM fica mais alto”</div>
+          <div class="obj-a">Sim, o custo pode subir, mas ele compra <b>atenção real</b> e não impressões desperdiçadas. As audiências Epsilon reduzem dispersão e aumentam o valor por contato. O resultado é <b>CPC mais rentáveis</b> e tráfego 3× mais qualificado.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-q">“Minha campanha é mar aberto”</div>
+          <div class="obj-a">Sem problema. <b>Mar aberto não é sinônimo de aleatório</b>. Com Epsilon você mantém alcance amplo, mas prioriza quem tem <b>propensão</b>. Resultado: menos dispersão, <b>cobertura eficiente</b> e base mais qualificada para as próximas fases.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-q">“As audiências são pequenas”</div>
+          <div class="obj-a">São menores porque são <b>mais relevantes</b>. Escalamos com <b>Lookalike Epsilon</b> mantendo sobreposição abaixo de 10% e preservando qualidade.</div>
+        </div>
+        <div class="obj-row">
+          <div class="obj-q">“Já uso dados da plataforma”</div>
+          <div class="obj-a">Perfeito. A Epsilon <b>complementa</b> os dados nativos com sinais do mundo real (intenção e comportamento persistente), enriquecendo o algoritmo e otimizando melhor as entregas.</div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a href="#pedido" class="btn btn-primary" role="button">Pedir audiências para Social</a>
+        <a href="OUTLOOK_BOOK_URL" target="_blank" class="btn btn-warn">Marcar sessão</a>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div>Dados profundos para mídia eficiente</div>
+      <a href="#" aria-label="Descadastrar">descadastre aqui</a>
+    </div>
+  </div>
+</div>
+
+<div id="pedido" class="backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="t_modal">
+    <div class="modal-head">
+      <div id="t_modal"><strong>Pedir audiências para Social</strong></div>
+      <a href="#" class="close" aria-label="Fechar" style="color:#fff; font-weight:700; font-size:20px;">×</a>
+    </div>
+    <div class="modal-body">
+      <form id="reqForm">
+        <div class="grid-2">
+          <div><label for="agencia">Agência</label><input id="agencia" required placeholder="Ex.: Publicis Groupe" /></div>
+          <div><label for="cliente">Cliente</label><input id="cliente" required placeholder="Ex.: Santander" /></div>
+        </div>
+        <div class="grid-2">
+          <div><label for="campanha">Campanha</label><input id="campanha" required placeholder="Ex.: Q4 Aquisição PF" /></div>
+          <div><label for="plataforma">Plataforma</label>
+            <select id="plataforma" required>
+              <option value="" selected disabled>Selecione</option>
+              <option>Meta</option><option>TikTok</option><option>Ambas</option>
+            </select></div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label for="invest">Potencial de Investimento</label>
+            <input id="invest" required placeholder="Ex.: R$ 150.000" />
+            <div class="hint">Valor estimado a ser <b>destinado às audiências Epsilon</b> (parte do budget total).</div>
+          </div>
+          <div><label for="kpi">KPI</label>
+            <select id="kpi" required>
+              <option value="" selected disabled>Selecione o KPI</option>
+              <option value="CTR">CTR</option><option value="CPC">CPC</option><option value="CPM">CPM</option><option value="CPV">CPV</option><option value="VTR">VTR</option><option value="CPL">CPL</option><option value="CPA">CPA</option><option value="ROAS">ROAS</option><option value="Engajamento no site">Engajamento no site</option>
+            </select></div>
+        </div>
+        <div class="grid-2">
+          <div><label for="kpiValor">Valor do KPI</label><input id="kpiValor" placeholder="Ex.: 0,30% para CTR ou R$ 1,80 para CPC" /></div>
+          <div><label for="prazo">Prazo desejado</label><input id="prazo" type="datetime-local" required /><div class="hint">Selecione data e horário. Datas passadas estão bloqueadas.</div></div>
+        </div>
+        <div><label for="brief">Briefing</label><textarea id="brief" placeholder="Objetivo, público, restrições, benchmarks, UTMs, datas, formatos"></textarea></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <a href="#" class="btn btn-outline">Cancelar</a>
+      <button class="btn btn-primary" id="enviar">Enviar pedido ao time Epsilon</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function setPrazoMin(){
+    const input = document.getElementById('prazo');
+    if(!input) return;
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth()+1).padStart(2,'0');
+    const dd = String(now.getDate()).padStart(2,'0');
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mi = String(now.getMinutes()).padStart(2,'0');
+    input.min = `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  })();
+
+  function v(id){ return document.getElementById(id).value?.trim() || ''; }
+  function fmtPrazo(val){
+    if(!val) return '';
+    try{
+      const d = new Date(val);
+      const opts = { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' };
+      return d.toLocaleString('pt-BR', opts);
+    }catch(e){ return val; }
+  }
+
+  document.getElementById('enviar').addEventListener('click', function(){
+    const to = 'publicisteam_br@epsilon.com';
+    const assunto = encodeURIComponent(`Pedido de Audiencias Social | ${v('agencia')} - ${v('cliente')} - ${v('campanha')}`);
+    const corpo =
+`Agência: ${v('agencia')}
+Cliente: ${v('cliente')}
+Campanha: ${v('campanha')}
+Plataforma: ${v('plataforma')}
+Potencial de Investimento (Epsilon): ${v('invest')}
+KPI: ${v('kpi')}
+Valor do KPI: ${v('kpiValor')}
+Prazo desejado: ${fmtPrazo(v('prazo'))}
+
+Briefing:
+${v('brief')}
+
+Enviado via Epsilon Social Webview.`.replace(/\n/g, '%0D%0A');
+    window.location.href = `mailto:${to}?subject=${assunto}&body=${corpo}`;
+  });
+</script>
+</body>
+</html>
